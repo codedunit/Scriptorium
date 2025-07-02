@@ -4,12 +4,753 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Scriptorium AI - Where Your Thoughts Come Alive</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-bg: #F4E4BC;
+            --secondary-bg: #F7F3E9;
+            --accent-gold: #D4AF37;
+            --accent-burgundy: #800020;
+            --accent-brown: #2C2416;
+            --text-primary: #2C2416;
+            --text-secondary: #4A4A4A;
+            --glass-bg: rgba(44, 36, 22, 0.05);
+            --glass-border: rgba(212, 175, 55, 0.2);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--primary-bg);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: 
+                radial-gradient(circle at 25% 25%, rgba(212, 175, 55, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(128, 0, 32, 0.02) 0%, transparent 50%),
+                linear-gradient(135deg, #F4E4BC 0%, #F7F3E9 50%, #F4E4BC 100%);
+            animation: backgroundShift 20s ease-in-out infinite;
+        }
+
+        @keyframes backgroundShift {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.02) rotate(0.5deg); }
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--accent-gold);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float 15s linear infinite;
+        }
+
+        .sparkle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--accent-gold);
+            border-radius: 50%;
+            opacity: 0;
+            animation: sparkle 4s ease-in-out infinite;
+        }
+
+        .sparkle::before,
+        .sparkle::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 1px;
+            background: var(--accent-gold);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .sparkle::after {
+            transform: translate(-50%, -50%) rotate(90deg);
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.3;
+            }
+            90% {
+                opacity: 0.3;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes sparkle {
+            0%, 100% {
+                opacity: 0;
+                transform: scale(0) rotate(0deg);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1) rotate(180deg);
+            }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        header {
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            background: rgba(244, 228, 188, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 20px rgba(212, 175, 55, 0.1);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-gold), var(--accent-burgundy));
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .cta-button {
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-burgundy));
+            color: #FFFFFF;
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(212, 175, 55, 0.3);
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.6s;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 12px 40px rgba(212, 175, 55, 0.4);
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        .quote-section {
+            margin-top: 80px;
+            padding: 2.5rem 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .quote {
+            font-size: 1.8rem;
+            font-weight: 300;
+            color: var(--accent-burgundy);
+            max-width: 800px;
+            margin: 0 auto 1rem;
+            line-height: 1.4;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.5s forwards;
+            transition: all 0.8s ease;
+            min-height: 3.6rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .quote.fade-out {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+
+        .quote.fade-in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .quote-author {
+            font-size: 1rem;
+            color: var(--accent-gold);
+            font-weight: 500;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.8s forwards;
+            transition: all 0.8s ease;
+        }
+
+        .quote-author.fade-out {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+
+        .quote-author.fade-in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero {
+            padding: 4rem 0 6rem;
+            text-align: center;
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 7vw, 5rem);
+            font-weight: 800;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, var(--accent-brown) 0%, var(--accent-gold) 30%, var(--accent-burgundy) 70%, var(--accent-brown) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.1;
+            opacity: 0;
+            animation: heroTitle 1.5s ease-out 1s forwards;
+        }
+
+        @keyframes heroTitle {
+            from {
+                opacity: 0;
+                transform: translateY(50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 3rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            color: var(--text-secondary);
+            font-weight: 400;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 1.3s forwards;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 1.6s forwards;
+        }
+
+        .secondary-button {
+            background: rgba(44, 36, 22, 0.1);
+            backdrop-filter: blur(10px);
+            color: var(--accent-brown);
+            padding: 1rem 2rem;
+            border: 2px solid var(--accent-brown);
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .secondary-button:hover {
+            background: var(--accent-brown);
+            color: #F4E4BC;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(44, 36, 22, 0.2);
+        }
+
+        .features {
+            padding: 8rem 0;
+            position: relative;
+            background: rgba(255, 255, 255, 0.02);
+            z-index: 10;
+        }
+
+        .features h2 {
+            text-align: center;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 4rem;
+            background: linear-gradient(135deg, var(--accent-brown), var(--accent-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            padding: 2.5rem;
+            border-radius: 20px;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(44, 36, 22, 0.1);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-burgundy));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+
+        .feature-card:hover::before {
+            opacity: 0.05;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 60px rgba(212, 175, 55, 0.2);
+            border-color: var(--accent-gold);
+        }
+
+        .feature-icon {
+            margin-bottom: 1.5rem;
+            display: block;
+            filter: drop-shadow(0 4px 8px rgba(212, 175, 55, 0.3));
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 1.5rem;
+        }
+
+        .feature-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--accent-burgundy);
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .how-it-works {
+            padding: 8rem 0;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(128, 0, 32, 0.08) 100%);
+            position: relative;
+            z-index: 10;
+        }
+
+        .how-it-works h2 {
+            text-align: center;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 4rem;
+            color: var(--accent-brown);
+            position: relative;
+            z-index: 1;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 3rem;
+            position: relative;
+        }
+
+        .step {
+            text-align: center;
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        .step:hover {
+            transform: translateY(-10px);
+        }
+
+        .step-number {
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-burgundy));
+            color: #FFFFFF;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0 auto 2rem;
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .step-number::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: rotate(45deg);
+            animation: shimmer 3s linear infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        .step h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--accent-brown);
+        }
+
+        .step p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .testimonials {
+            padding: 8rem 0;
+            position: relative;
+            background: rgba(247, 243, 233, 0.3);
+            z-index: 10;
+        }
+
+        .testimonials h2 {
+            text-align: center;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 4rem;
+            color: var(--accent-brown);
+            position: relative;
+            z-index: 1;
+        }
+
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .testimonial {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            padding: 2.5rem;
+            border-radius: 20px;
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(44, 36, 22, 0.1);
+        }
+
+        .testimonial::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 20px;
+            font-size: 4rem;
+            color: var(--accent-gold);
+            font-family: serif;
+        }
+
+        .testimonial:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(44, 36, 22, 0.15);
+        }
+
+        .testimonial p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            font-style: italic;
+        }
+
+        .testimonial-author {
+            color: var(--accent-burgundy);
+            font-weight: 600;
+        }
+
+        .cta-section {
+            padding: 8rem 0;
+            background: linear-gradient(135deg, rgba(44, 36, 22, 0.9), rgba(128, 0, 32, 0.85));
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.05); }
+        }
+
+        .cta-section h2 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #F4E4BC, var(--accent-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-section p {
+            font-size: 1.2rem;
+            margin-bottom: 3rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            color: #F4E4BC;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-section .cta-button {
+            font-size: 1.1rem;
+            padding: 1.2rem 3rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        footer {
+            background: var(--accent-brown);
+            border-top: 1px solid var(--glass-border);
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: #F4E4BC;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-gold);
+        }
+
+        footer p {
+            color: #F4E4BC;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 3rem;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .features h2,
+            .how-it-works h2,
+            .testimonials h2,
+            .cta-section h2 {
+                font-size: 2rem;
+            }
+        }
+
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease;
+        }
+
+        .animate-on-scroll.animated {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
 </head>
 <body>
+    <svg class="logo-gradient" style="position: absolute; width: 0; height: 0; opacity: 0; pointer-events: none;">
+        <defs>
+            <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#D4AF37;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#800020;stop-opacity:1" />
+            </linearGradient>
+        </defs>
+    </svg>
+
+    <div class="bg-animation"></div>
+    <div class="particles" id="particles"></div>
+
     <header>
         <nav class="container">
-            <div class="logo">Scriptorium</div>
+            <div class="logo">
+                <svg class="logo-icon" viewBox="0 0 32 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8 3 Q2 3 2 7.5 Q2 12 8 12 Q14 12 14 16.5 Q14 21 8 21" 
+                          stroke="url(#logoGradient)" 
+                          stroke-width="2.5" 
+                          fill="none" 
+                          stroke-linecap="round"/>
+                    <circle cx="18" cy="12" r="1.5" fill="#D4AF37"/>
+                </svg>
+                Scriptorium
+            </div>
             <ul class="nav-links">
                 <li><a href="#features">Features</a></li>
                 <li><a href="#how-it-works">How It Works</a></li>
@@ -22,56 +763,167 @@
 
     <section class="quote-section">
         <div class="container">
-            <div class="quote">
+            <div class="quote" id="rotating-quote">
                 "The palest ink is better than the best memory."
             </div>
-            <div class="quote-author">— Chinese Proverb</div>
+            <div class="quote-author" id="quote-author">— Chinese Proverb</div>
         </div>
     </section>
 
     <section class="hero">
         <div class="container">
-            <h1>Where Your Handwritten Thoughts Come Alive</h1>
-            <p>Bridging the gap between outdated physical writing and the growing digital world.
-                Transform your handwritten thoughts into an intelligent companion. Scriptorium breathes life into your physical notebooks, organizing, digitizing, and connecting ideas to help your thinking.</p>
-            <div class="hero-buttons">
-                <a href="#download" class="cta-button">Join the Waitlist</a>
-                <a href="#demo" class="secondary-button">Watch Demo</a>
+            <div class="hero-content">
+                <h1>Where Your Handwritten Thoughts Come Alive</h1>
+                <p>Bridging the gap between outdated physical writing and the growing digital world.
+                    Transform your handwritten thoughts into an intelligent companion. Scriptorium breathes life into your physical notebooks, organizing, digitizing, and connecting ideas to help your thinking.</p>
+                <div class="hero-buttons">
+                    <a href="#download" class="cta-button">Join the Waitlist</a>
+                    <a href="#demo" class="secondary-button">Watch Demo</a>
+                </div>
             </div>
         </div>
     </section>
 
-    <section class="features" id="features">
+    <section class="features animate-on-scroll" id="features">
         <div class="container">
             <h2>Your Thoughts, Amplified</h2>
             <div class="features-grid">
                 <div class="feature-card">
-                    <span class="feature-icon">📱</span>
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="brainGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#D4AF37"/>
+                                    <stop offset="100%" style="stop-color:#800020"/>
+                                </linearGradient>
+                            </defs>
+                            <rect x="10" y="15" width="40" height="30" rx="3" fill="#F7F3E9" stroke="#D4AF37" stroke-width="1.5"/>
+                            <path d="M15 25 Q25 23 35 25" stroke="#800020" stroke-width="1.5" fill="none"/>
+                            <path d="M15 30 Q30 28 45 30" stroke="#800020" stroke-width="1.5" fill="none"/>
+                            <path d="M15 35 Q22 33 35 35" stroke="#800020" stroke-width="1.5" fill="none"/>
+                            <path d="M40 10 L50 20" stroke="#2C2416" stroke-width="2" stroke-linecap="round"/>
+                            <circle cx="40" cy="10" r="2" fill="url(#brainGradient)"/>
+                        </svg>
+                    </div>
                     <h3>Thought Recognition</h3>
                     <p>Advanced AI reads your handwritten thoughts with remarkable precision, understanding not just words but the ideas behind them.</p>
                 </div>
                 <div class="feature-card">
-                    <span class="feature-icon">🔗</span>
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="linkGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#D4AF37"/>
+                                    <stop offset="100%" style="stop-color:#800020"/>
+                                </linearGradient>
+                            </defs>
+                            <rect x="5" y="10" width="20" height="15" rx="2" fill="#F7F3E9" stroke="#D4AF37" stroke-width="1"/>
+                            <rect x="35" y="35" width="20" height="15" rx="2" fill="#F7F3E9" stroke="#D4AF37" stroke-width="1"/>
+                            <rect x="20" y="20" width="20" height="15" rx="2" fill="#F7F3E9" stroke="#D4AF37" stroke-width="1"/>
+                            <path d="M25 17 Q30 20 30 27" stroke="url(#linkGradient)" stroke-width="2" fill="none"/>
+                            <path d="M35 32 Q40 35 40 35" stroke="url(#linkGradient)" stroke-width="2" fill="none"/>
+                            <path d="M8 15 L18 15" stroke="#800020" stroke-width="0.8"/>
+                            <path d="M8 18 L15 18" stroke="#800020" stroke-width="0.8"/>
+                            <path d="M23 25 L33 25" stroke="#800020" stroke-width="0.8"/>
+                            <path d="M38 40 L48 40" stroke="#800020" stroke-width="0.8"/>
+                        </svg>
+                    </div>
                     <h3>Idea Connections</h3>
                     <p>Watch as scattered thoughts transform into connected insights. Our AI traces the evolution of your ideas across different pages and time periods.</p>
                 </div>
                 <div class="feature-card">
-                    <span class="feature-icon">🧠</span>
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="partnerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#D4AF37"/>
+                                    <stop offset="100%" style="stop-color:#800020"/>
+                                </linearGradient>
+                            </defs>
+                            <path d="M10 35 Q30 25 50 35 L50 45 Q30 35 10 45 Z" fill="#F7F3E9" stroke="#D4AF37" stroke-width="1.5"/>
+                            <path d="M30 25 L30 45" stroke="#D4AF37" stroke-width="1"/>
+                            <path d="M15 32 L25 32" stroke="#800020" stroke-width="0.8"/>
+                            <path d="M15 36 L23 36" stroke="#800020" stroke-width="0.8"/>
+                            <path d="M35 32 L45 32" stroke="#800020" stroke-width="0.8"/>
+                            <path d="M35 36 L43 36" stroke="#800020" stroke-width="0.8"/>
+                            <circle cx="20" cy="20" r="1" fill="url(#partnerGradient)">
+                                <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite"/>
+                            </circle>
+                            <circle cx="40" cy="18" r="1.5" fill="url(#partnerGradient)">
+                                <animate attributeName="opacity" values="1;0.3;1" dur="1.5s" repeatCount="indefinite"/>
+                            </circle>
+                            <circle cx="30" cy="15" r="1" fill="url(#partnerGradient)">
+                                <animate attributeName="opacity" values="0.5;1;0.5" dur="2.5s" repeatCount="indefinite"/>
+                            </circle>
+                        </svg>
+                    </div>
                     <h3>Thinking Partner</h3>
                     <p>More than storage—a true thinking companion. Scriptorium AI helps you discover patterns in your reasoning and expand on promising ideas.</p>
                 </div>
                 <div class="feature-card">
-                    <span class="feature-icon">🔍</span>
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="searchGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#D4AF37"/>
+                                    <stop offset="100%" style="stop-color:#800020"/>
+                                </linearGradient>
+                            </defs>
+                            <rect x="10" y="20" width="30" height="20" rx="2" fill="#F7F3E9" stroke="#D4AF37" stroke-width="1.5"/>
+                            <path d="M15 28 L30 28" stroke="#800020" stroke-width="1"/>
+                            <path d="M15 32 L25 32" stroke="#800020" stroke-width="1"/>
+                            <path d="M15 36 L28 36" stroke="#800020" stroke-width="1"/>
+                            <circle cx="42" cy="25" r="8" fill="none" stroke="url(#searchGradient)" stroke-width="2"/>
+                            <path d="M48 31 L54 37" stroke="url(#searchGradient)" stroke-width="3" stroke-linecap="round"/>
+                            <rect x="20" y="26" width="8" height="4" fill="#D4AF37" opacity="0.3"/>
+                        </svg>
+                    </div>
                     <h3>Thought Search</h3>
                     <p>Find any thought instantly. Search by mood, concept, or that half-remembered insight from last month. Every brilliant moment, preserved and findable.</p>
                 </div>
                 <div class="feature-card">
-                    <span class="feature-icon">📈</span>
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="evolutionGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#D4AF37"/>
+                                    <stop offset="100%" style="stop-color:#800020"/>
+                                </linearGradient>
+                            </defs>
+                            <rect x="15" y="35" width="25" height="15" rx="2" fill="#F7F3E9" stroke="#D4AF37" stroke-width="1"/>
+                            <rect x="18" y="30" width="25" height="15" rx="2" fill="#F7F3E9" stroke="#D4AF37" stroke-width="1"/>
+                            <rect x="21" y="25" width="25" height="15" rx="2" fill="#F7F3E9" stroke="#D4AF37" stroke-width="1"/>
+                            <path d="M10 45 Q20 15 50 20" stroke="url(#evolutionGradient)" stroke-width="2" fill="none"/>
+                            <circle cx="12" cy="42" r="1" fill="#D4AF37"/>
+                            <circle cx="30" cy="25" r="1.5" fill="#800020"/>
+                            <circle cx="48" cy="22" r="2" fill="url(#evolutionGradient)"/>
+                            <path d="M18 40 L35 40" stroke="#800020" stroke-width="0.8"/>
+                            <path d="M24 32 L38 32" stroke="#800020" stroke-width="0.8"/>
+                        </svg>
+                    </div>
                     <h3>Thinking Evolution</h3>
                     <p>See how your thoughts mature over time. Track the journey of ideas from first spark to fully formed insights, just like history's greatest thinkers.</p>
                 </div>
                 <div class="feature-card">
-                    <span class="feature-icon">🔒</span>
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="privateGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#D4AF37"/>
+                                    <stop offset="100%" style="stop-color:#800020"/>
+                                </linearGradient>
+                            </defs>
+                            <rect x="15" y="15" width="30" height="35" rx="3" fill="#F7F3E9" stroke="#D4AF37" stroke-width="1.5"/>
+                            <rect x="25" y="28" width="10" height="8" rx="1" fill="url(#privateGradient)"/>
+                            <path d="M27 28 Q27 23 33 23 Q33 28 33 28" stroke="url(#privateGradient)" stroke-width="2" fill="none"/>
+                            <path d="M20 20 L20 25 L25 25" stroke="#800020" stroke-width="1" fill="none"/>
+                            <path d="M40 20 L40 25 L35 25" stroke="#800020" stroke-width="1" fill="none"/>
+                            <path d="M20 45 L20 40 L25 40" stroke="#800020" stroke-width="1" fill="none"/>
+                            <path d="M40 45 L40 40 L35 40" stroke="#800020" stroke-width="1" fill="none"/>
+                            <path d="M20 22 L35 22" stroke="#800020" stroke-width="0.5" opacity="0.5"/>
+                            <path d="M20 42 L35 42" stroke="#800020" stroke-width="0.5" opacity="0.5"/>
+                        </svg>
+                    </div>
                     <h3>Your Thoughts, Private</h3>
                     <p>Your innermost thoughts remain yours alone. Advanced privacy protection ensures your ideas stay secure while still being searchable and connectable.</p>
                 </div>
@@ -79,7 +931,7 @@
         </div>
     </section>
 
-    <section class="how-it-works" id="how-it-works">
+    <section class="how-it-works animate-on-scroll" id="how-it-works">
         <div class="container">
             <h2>From Pen to Insight</h2>
             <div class="steps">
@@ -107,27 +959,27 @@
         </div>
     </section>
 
-    <section class="testimonials" id="testimonials">
+    <section class="testimonials animate-on-scroll" id="testimonials">
         <div class="container">
             <h2>What Thinkers Say</h2>
             <div class="testimonial-grid">
                 <div class="testimonial">
-                    <p>"Carry a notebook and a pen with you wherever you go. Get used to pulling it out and jotting stuff down. Ideas come when you're least expecting them."</p>
+                    <p>Carry a notebook and a pen with you wherever you go. Get used to pulling it out and jotting stuff down. Ideas come when you're least expecting them.</p>
                     <div class="testimonial-author">— Austin Kleon, Steal Like an Artist: 10 Things Nobody Told You About Being Creative</div>
                 </div>
                 <div class="testimonial">
-                    <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. "</p>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
                     <div class="testimonial-author">— [Author], Occupation</div>
                 </div>
                 <div class="testimonial">
-                    <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. "</p>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
                     <div class="testimonial-author">— [Author], Occupation</div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="cta-section">
+    <section class="cta-section animate-on-scroll">
         <div class="container">
             <h2>Join the Renaissance of Thought</h2>
             <p>Step into a tradition that connects you with history's greatest minds. Transform your handwritten thoughts into a living, breathing extension of your intellect.</p>
@@ -147,5 +999,178 @@
             <p>&copy; 2025 Scriptorium AI. All rights reserved.</p>
         </div>
     </footer>
+
+    <script>
+        function initRotatingQuotes() {
+            const quotes = [
+                {
+                    text: "The palest ink is better than the best memory.",
+                    author: "Chinese Proverb"
+                },
+                {
+                    text: "Carry a notebook and a pen with you wherever you go. Get used to pulling it out and jotting stuff down.",
+                    author: "Austin Kleon"
+                },
+                {
+                    text: "The act of writing is the act of discovering what you believe.",
+                    author: "David Hare"
+                },
+                {
+                    text: "A notebook is the perfect place to exercise your curiosity and creativity.",
+                    author: "Danny Gregory"
+                },
+                {
+                    text: "Paper has more patience than people.",
+                    author: "Anne Frank"
+                },
+                {
+                    text: "I write entirely to find out what I'm thinking, what I'm looking at, what I see and what it means.",
+                    author: "Joan Didion"
+                },
+                {
+                    text: "The notebook is a way of thinking. It's a place for ideas to live and grow.",
+                    author: "Ryan Holiday"
+                }
+            ];
+
+            const quoteElement = document.getElementById('rotating-quote');
+            const authorElement = document.getElementById('quote-author');
+            let currentQuoteIndex = 0;
+
+            function changeQuote() {
+                quoteElement.classList.add('fade-out');
+                authorElement.classList.add('fade-out');
+
+                setTimeout(() => {
+                    currentQuoteIndex = (currentQuoteIndex + 1) % quotes.length;
+                    quoteElement.textContent = `"${quotes[currentQuoteIndex].text}"`;
+                    authorElement.textContent = `— ${quotes[currentQuoteIndex].author}`;
+
+                    quoteElement.classList.remove('fade-out');
+                    authorElement.classList.remove('fade-out');
+                    quoteElement.classList.add('fade-in');
+                    authorElement.classList.add('fade-in');
+
+                    setTimeout(() => {
+                        quoteElement.classList.remove('fade-in');
+                        authorElement.classList.remove('fade-in');
+                    }, 800);
+                }, 400);
+            }
+
+            setInterval(changeQuote, 6000);
+        }
+
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 30;
+            const sparkleCount = 20;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                particlesContainer.appendChild(particle);
+            }
+
+            for (let i = 0; i < sparkleCount; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                sparkle.style.left = Math.random() * 100 + '%';
+                sparkle.style.top = Math.random() * 100 + '%';
+                sparkle.style.animationDelay = Math.random() * 4 + 's';
+                sparkle.style.animationDuration = (Math.random() * 2 + 3) + 's';
+                particlesContainer.appendChild(sparkle);
+            }
+        }
+
+        function handleScrollAnimations() {
+            const elements = document.querySelectorAll('.animate-on-scroll');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animated');
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            });
+
+            elements.forEach(element => {
+                observer.observe(element);
+            });
+        }
+
+        function initSmoothScroll() {
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        }
+
+        function handleHeaderScroll() {
+            const header = document.querySelector('header');
+
+            window.addEventListener('scroll', () => {
+                const currentScroll = window.pageYOffset;
+                
+                if (currentScroll > 100) {
+                    header.style.background = 'rgba(244, 228, 188, 0.95)';
+                    header.style.boxShadow = '0 2px 20px rgba(212, 175, 55, 0.2)';
+                } else {
+                    header.style.background = 'rgba(244, 228, 188, 0.9)';
+                    header.style.boxShadow = '0 2px 20px rgba(212, 175, 55, 0.1)';
+                }
+            });
+        }
+
+        function initParallax() {
+            window.addEventListener('scroll', () => {
+                const scrolled = window.pageYOffset;
+                const sparkles = document.querySelectorAll('.sparkle');
+                
+                sparkles.forEach((sparkle, index) => {
+                    const speed = 0.2 + (index % 3) * 0.1;
+                    sparkle.style.transform = `translateY(${scrolled * speed}px) scale(1) rotate(180deg)`;
+                });
+            });
+        }
+
+        function initCardEffects() {
+            const cards = document.querySelectorAll('.feature-card, .testimonial');
+            
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-10px) scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+            handleScrollAnimations();
+            initSmoothScroll();
+            handleHeaderScroll();
+            initParallax();
+            initCardEffects();
+            initRotatingQuotes();
+        });
+    </script>
 </body>
 </html>
